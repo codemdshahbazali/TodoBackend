@@ -1,5 +1,6 @@
 const e = require('express');
 const { emailValidate, passwordValidate } = require('../utils/validate');
+const errorMessages = require('./../constants/errorMessages');
 
 /**
  *
@@ -20,16 +21,16 @@ const initialRegisterChecks = (req, res, next) => {
     typeof password !== 'string' ||
     typeof confirmPassword !== 'string'
   ) {
-    errorMessage = 'email or password or confirm password is not a string';
+    errorMessage = errorMessages.checks.register.NOT_STRING;
   } else {
     if (password !== confirmPassword) {
-      errorMessage = 'Password and Confirm password are not same';
+      errorMessage = errorMessages.checks.register.PASSWORD_NOT_SAME;
     } else {
       if (!emailValidate(email)) {
-        errorMessage = 'Email is not valid';
+        errorMessage = errorMessages.checks.register.EMAIL_NOT_VALID;
       } else {
         if (!passwordValidate(password)) {
-          errorMessage = 'Password is not strong enough';
+          errorMessage = errorMessages.checks.register.PASSWORD_NOT_STRONG;
         }
       }
     }
@@ -55,10 +56,10 @@ const loginChecks = (req, res, next) => {
 
   let errorMessage = '';
   if (typeof email !== 'string' || typeof password !== 'string') {
-    errorMessage = 'email or password should be string';
+    errorMessage = errorMessages.checks.login.NOT_STRING;
   } else {
     if (!emailValidate(email)) {
-      errorMessage = 'Not a valid email.';
+      errorMessage = errorMessages.checks.login.EMAIL_NOT_VALID;
     }
   }
 

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('./../models/User');
+const errorMessages = require('./../constants/errorMessages');
 
 /**
  *
@@ -21,7 +22,9 @@ const register = async (req, res, next) => {
       where: { email: email.toLowerCase() },
     });
     if (alreadyExist) {
-      return res.status(401).send({ error: 'Email alraedy exists!!!' });
+      return res
+        .status(401)
+        .send({ error: errorMessages.register.EMAIL_EXISTS });
     }
 
     //Hashing password using bcrypt
@@ -46,7 +49,10 @@ const register = async (req, res, next) => {
   } catch (e) {
     return res
       .status(500)
-      .send({ error: 'Issue registering the User.', errorDetail: e.message });
+      .send({
+        error: errorMessages.register.REGISTER_ISSUE,
+        errorDetail: e.message,
+      });
   }
 };
 

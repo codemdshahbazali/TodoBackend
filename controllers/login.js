@@ -2,6 +2,7 @@ const User = require('./../models/User');
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 const config = require('./../config');
+const errorMessages = require('./../constants/errorMessages');
 
 /**
  *
@@ -27,7 +28,7 @@ const loginController = async (req, res, next) => {
     if (user.length > 0) {
       user = Array.from(user)[0].dataValues;
     } else {
-      throw new Error('Email not found');
+      throw new Error(errorMessages.login.EMAIL_NOT_FOUND);
     }
 
     //Verifying password
@@ -43,7 +44,9 @@ const loginController = async (req, res, next) => {
       res.locals.token = token;
       next();
     } else {
-      return res.status(400).send({ error: 'Incorrect Password' });
+      return res
+        .status(400)
+        .send({ error: errorMessages.login.INCORRECT_PASSWORD });
     }
   } catch (e) {
     return res.status(400).send({ error: e.message });

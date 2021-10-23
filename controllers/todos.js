@@ -1,6 +1,7 @@
 const Todo = require('./../models/Todo');
 var jwt = require('jsonwebtoken');
 const config = require('./../config');
+const errorMessages = require('./../constants/errorMessages');
 
 /**
  *
@@ -55,7 +56,7 @@ const updateTodo = async (req, res, next) => {
 
     if (updatedTodo[0] === 0) {
       updatedTodo = {
-        message: 'User not found. Update failed !!!',
+        error: errorMessages.todos.updateTodo.USER_NOT_FOUND,
       };
     } else {
       const todo = await Todo.findOne({
@@ -121,7 +122,7 @@ const getSingleTodo = async (req, res, next) => {
     });
 
     if (todo === null) {
-      throw new Error('Todo Not found!');
+      throw new Error(errorMessages.todos.getSingleTodo.TODO_NOT_FOUND);
     }
 
     res.locals.individualTodo = todo;
@@ -152,7 +153,7 @@ const deleteTodo = async (req, res, next) => {
     });
 
     if (destroyedRowNumber == 0) {
-      throw new Error("Todo doesn't exists!");
+      throw new Error(errorMessages.todos.deleteTodo.TODO_NOT_FOUND);
     }
     next();
   } catch (e) {
