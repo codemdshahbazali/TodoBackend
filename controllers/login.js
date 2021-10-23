@@ -42,6 +42,11 @@ const loginController = async (req, res, next) => {
         }
       );
       res.locals.token = token;
+
+      //Setting browser cookie
+      res.cookie('access-token', token, {
+        httpOnly: true,
+      });
       next();
     } else {
       return res
