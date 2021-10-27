@@ -14,7 +14,6 @@ const createTodo = async (req, res, next) => {
   try {
     const { item } = req.body;
 
-    //verifying JWT
     var decoded = req.user;
 
     const createdTodo = await Todo.create({
@@ -41,7 +40,6 @@ const updateTodo = async (req, res, next) => {
     const { item, isCompleted } = req.body;
     const todoId = req.params.id;
 
-    //verifying JWT
     var decoded = req.user;
 
     let updatedTodo = await Todo.update(
@@ -85,7 +83,6 @@ const updateTodo = async (req, res, next) => {
  */
 const getAllTodos = async (req, res, next) => {
   try {
-    //verifying JWT
     var decoded = req.user;
 
     const { count, rows } = await Todo.findAndCountAll({
@@ -111,7 +108,6 @@ const getAllTodos = async (req, res, next) => {
 const getSingleTodo = async (req, res, next) => {
   try {
     const todoId = req.params.id;
-    //verifying JWT
     var decoded = req.user;
 
     const todo = await Todo.findOne({
@@ -143,7 +139,6 @@ const deleteTodo = async (req, res, next) => {
   try {
     const todoId = req.params.id;
 
-    //verifying JWT
     var decoded = req.user;
     const destroyedRowNumber = await Todo.destroy({
       where: {
@@ -164,7 +159,9 @@ const deleteTodo = async (req, res, next) => {
 /**
  * Verifies jwt token and returns decoded token
  * @param {Request passed from middleware} req
- * @returns returns decode values
+ * @param {Response passed from middleware} res
+ * @param {Calls the next function} next
+ * @returns
  */
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
