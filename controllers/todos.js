@@ -15,7 +15,7 @@ const createTodo = async (req, res, next) => {
     const { item } = req.body;
 
     //verifying JWT
-    var decoded = validateJWT(req);
+    var decoded = req.user;
 
     const createdTodo = await Todo.create({
       item,
@@ -42,7 +42,7 @@ const updateTodo = async (req, res, next) => {
     const todoId = req.params.id;
 
     //verifying JWT
-    var decoded = validateJWT(req);
+    var decoded = req.user;
 
     let updatedTodo = await Todo.update(
       { item, isCompleted },
@@ -86,7 +86,7 @@ const updateTodo = async (req, res, next) => {
 const getAllTodos = async (req, res, next) => {
   try {
     //verifying JWT
-    var decoded = validateJWT(req);
+    var decoded = req.user;
 
     const { count, rows } = await Todo.findAndCountAll({
       where: {
@@ -112,7 +112,7 @@ const getSingleTodo = async (req, res, next) => {
   try {
     const todoId = req.params.id;
     //verifying JWT
-    var decoded = validateJWT(req);
+    var decoded = req.user;
 
     const todo = await Todo.findOne({
       where: {
@@ -144,7 +144,7 @@ const deleteTodo = async (req, res, next) => {
     const todoId = req.params.id;
 
     //verifying JWT
-    var decoded = validateJWT(req);
+    var decoded = req.user;
     const destroyedRowNumber = await Todo.destroy({
       where: {
         id: todoId,
@@ -166,11 +166,20 @@ const deleteTodo = async (req, res, next) => {
  * @param {Request passed from middleware} req
  * @returns returns decode values
  */
-const validateJWT = (req) => {
-  const token = req.headers['authorization'].split(' ')[1];
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
 
   // verify a token symmetric - synchronous
-  return jwt.verify(token, config.AccessTokenSecret);
+  jwt.verify(token, config.AccessTokenSecret, (err, user) => {
+    if (err) return res.sendStatus(403);
+
+    req.user = user;
+
+    next();
+  });
 };
 
 module.exports = {
@@ -179,4 +188,5 @@ module.exports = {
   getSingleTodo,
   deleteTodo,
   updateTodo,
+  authenticateToken,
 };

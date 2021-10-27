@@ -9,7 +9,7 @@ const errorMessages = {
   },
   todos: {
     updateTodo: {
-      USER_NOT_FOUND: 'User not found. Update failed',
+      USER_NOT_FOUND: 'Todo not found. Update failed',
     },
     getSingleTodo: {
       TODO_NOT_FOUND: 'Todo Not found',
